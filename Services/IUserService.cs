@@ -4,10 +4,10 @@ namespace Services
 {
     public interface IUserService
     {
-        User addUser(User user);
+        Task<User> addUser(User user);
         User getById(int id);
-        User login(string email, string password);
-        User updateUser(int id, User userToUpdate);
+        Task<User> login(string email, string password);
+        Task<User> updateUser(int id, User userToUpdate);
         int checkPassword(string password);
     }
 }

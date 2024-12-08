@@ -23,11 +23,12 @@ const updateDetails = async () => {
         const dataPut = await responsePut.json();
         if (responsePut.ok)
             alert(`${dataPut.firstName} updated`)
-        else 
+        else
             alert("password is not enough strong , please enter a difference..")
-            
     }
     catch (a) {
         alert("")
     }
+   
+
  }

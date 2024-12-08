@@ -28,7 +28,8 @@ const SignIn = async () => {
         })
         const dataPost = await responsePost.json();
         if (!responsePost.ok)
-            alert("password is not enough strong , please enter a difference..")
+            alert("errr")
+           /* alert("password is not enough strong , please enter a difference..")*/
         else
             alert(`${dataPost.firstName} created`)
     }
@@ -51,7 +52,7 @@ const Login = async () => {
         const dataPost = await responsePost.json();
         alert(`welcome ${dataPost.firstName}`)
         window.location.href = "updateUserDetails.html"
-        sessionStorage.setItem("currentUser", dataPost.userId)
+        sessionStorage.setItem("currentUser", dataPost.id)
     }
     catch (err) {
             alert("")

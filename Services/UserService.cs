@@ -19,18 +19,18 @@ public class UserService : IUserService
         userRepository = _userRepository;
     }
 
-    public User addUser(User user)
+    public Task<User> addUser(User user)
     {
         if (checkPassword(user.Password) >= 3)
             return userRepository.addUser(user);
         else
             return null;
     }
-    public User login(string email, string password)
+    public Task<User> login(string email, string password)
     {
         return userRepository.login(email, password);
     }
-    public User updateUser(int id, User userToUpdate)
+    public Task<User> updateUser(int id, User userToUpdate)
     {
         if (checkPassword(userToUpdate.Password) >= 3)
             return userRepository.updateUser(id, userToUpdate);
