@@ -28,12 +28,13 @@ public class UsersController : ControllerBase
 
     // POST api/<UsersController>
     [HttpPost]
-    public async Task<ActionResult> Post([FromBody] User user)
+    public async Task<ActionResult<User>> Post([FromBody] User user)
     {
-        User newU = await userService.addUser(user);
-        if (newU == null)
-            return BadRequest();
-        return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
+        var newU = await userService.addUser(user);
+        if (newU!= null)
+            return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
+        return BadRequest();
+       
     }
 
     [HttpPost]
