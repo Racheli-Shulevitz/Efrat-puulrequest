@@ -19,10 +19,10 @@ public class UserService : IUserService
         userRepository = _userRepository;
     }
 
-    public Task<User> addUser(User user)
+    public async Task<User> addUser(User user)
     {
         if (checkPassword(user.Password) >= 3)
-            return userRepository.addUser(user);
+            return await userRepository.addUser(user);
         else
             return null;
     }
@@ -37,9 +37,9 @@ public class UserService : IUserService
         else 
             return null;
     }
-    public User getById(int id)
+    public async Task<User> getById(int id)
     {
-        return userRepository.getById(id);
+        return await userRepository.getById(id);
     }
     public int checkPassword(string password)
     {

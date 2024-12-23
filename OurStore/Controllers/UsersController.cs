@@ -3,6 +3,8 @@ using System.Text.Json;
 using Services;
 using Entities;
 using System.Reflection.Metadata.Ecma335;
+using AutoMapper;
+using DTO;
 //using (StreamReader reader = System.IO.File.OpenText("M:\\web - api\\OurStore\\OurStore\\users.txt")) ;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -14,27 +16,29 @@ namespace OurStore.Controllers;
 public class UsersController : ControllerBase
 {
     IUserService userService;
+    IMapper mapper;
 
-    public UsersController(IUserService _userService)
+    public UsersController(IUserService _userService,IMapper _mapper)
     {
         userService = _userService;
+        mapper = _mapper;
     }
     [HttpGet("{id}")]
-    public ActionResult<User> Get(int id)
+    public async Task<ActionResult<UserDTO>> Get(int id)
     {
-        User checkUser = userService.getById(id);
-        return checkUser!=null? Ok(checkUser): NoContent();
+        User checkUser = await userService.getById(id);
+        UserDTO userDTO = mapper.Map<User, UserDTO>(checkUser);
+        return userDTO != null? Ok(userDTO) : NoContent();
     }
 
     // POST api/<UsersController>
     [HttpPost]
-    public async Task<ActionResult<User>> Post([FromBody] User user)
+    public async Task<ActionResult<User>> Post([FromBody] UserDTOPost user)
     {
-        var newU = await userService.addUser(user);
+       User newU = await userService.addUser(mapper.Map<UserDTOPost, User>(user));
         if (newU!= null)
-            return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
+            return CreatedAtAction(nameof(Get), new { id = newU.Id }, mapper.Map<User, UserDTO>(newU));
         return BadRequest();
-       
     }
 
     [HttpPost]
@@ -47,9 +51,9 @@ public class UsersController : ControllerBase
 
     // PUT api/<UsersController>/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] User userToUpdate)
+    public async Task<IActionResult> Put(int id, [FromBody] UserDTOPost userToUpdate)
     {
-        User newU= await userService.updateUser(id,userToUpdate);
+        User newU = await userService.updateUser(id, mapper.Map<UserDTOPost, User>(userToUpdate));
         return newU == null ? BadRequest() : Ok();
     }
     [HttpPost]

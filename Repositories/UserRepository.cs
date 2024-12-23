@@ -17,20 +17,9 @@ public class UserRepository : IUserRepository
     {
         _OurStoreContext = ourStoreContext;
     }
-    string filePath = "M:\\web-api\\OurStore\\OurStore\\users.txt";
-    public User getById(int id)
+    public async Task<User> getById(int id)
     {
-        using (StreamReader reader = System.IO.File.OpenText(filePath))
-        {
-            string? currentUserInFile;
-            while ((currentUserInFile = reader.ReadLine()) != null)
-            {
-                User user = JsonSerializer.Deserialize<User>(currentUserInFile);
-                if (user.Id == id)
-                    return user;
-            }
-        }
-        return null;
+        return await _OurStoreContext.Users.Include(user=>user.Orders).FirstOrDefaultAsync(user => user.Id == id);
     }
     public async Task<User> addUser(User user)
     {

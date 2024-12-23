@@ -28,13 +28,12 @@ const SignIn = async () => {
         })
         const dataPost = await responsePost.json();
         if (!responsePost.ok)
-            alert("errr")
-           /* alert("password is not enough strong , please enter a difference..")*/
+            alert("password is not enough strong , please enter a difference..")
         else
             alert(`${dataPost.firstName} created`)
     }
     catch (error) {
-        alert("error")
+        alert(error)
     }
 }
 const Login = async () => {
