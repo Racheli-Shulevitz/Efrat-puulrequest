@@ -1,12 +1,16 @@
-﻿const categoryIds = []
-const GetData = () => {
+﻿const GetData = () => {
     document.getElementById("PoductList").innerHTML=""
     const nameSearch = document.querySelector("#nameSearch").value;
     const minPrice = document.querySelector("#minPrice").value;
     const maxPrice = document.querySelector("#maxPrice").value;
+    let categoryIds = JSON.parse(sessionStorage.getItem("categoryIds"))
     return { nameSearch, minPrice, maxPrice, categoryIds }
 }
 const load = addEventListener("load", async () => {
+    const categoryIdArr = []
+    sessionStorage.setItem("categoryIds", JSON.stringify(categoryIdArr))
+    let ShoppinBag = JSON.parse(sessionStorage.getItem("shoppingBag"))||[]
+    sessionStorage.setItem("shoppingBag", JSON.stringify(ShoppinBag))
     filterProducts()
     getCategories()
 })
@@ -15,18 +19,25 @@ const viewProducts = async (products) => {
         viewOneProduct(products[i])
     }
 }
-
+const addToCart = (product) => {
+    let products = JSON.parse(sessionStorage.getItem("shoppingBag"))
+    products.push(product)
+    sessionStorage.setItem("shoppingBag", JSON.stringify(products))
+    document.querySelector("#ItemsCountText").textContent = parseInt(document.querySelector("#ItemsCountText").textContent)+1
+}
 const viewOneProduct = async (product) => {
     const template = document.getElementById("temp-card")
     let cloneProduct = template.content.cloneNode(true)
     cloneProduct.querySelector("img").src =`../Images/${product.image}`
     cloneProduct.querySelector("h1").textContent = product.productName
-    cloneProduct.querySelector(".price").innerText = product.price
+    cloneProduct.querySelector(".price").innerText = product.price + ' ₪'
     cloneProduct.querySelector(".description").innerText = product.description
+    cloneProduct.querySelector(".bag").addEventListener('click', () => { addToCart(product) })
     document.getElementById("PoductList").appendChild(cloneProduct)
+    
 }
 const filterProducts = async () => {
-    const { nameSearch, minPrice, maxPrice, categoryIds } = GetData()
+    const { nameSearch, minPrice, maxPrice,categoryIds} = GetData()
     let url = "api/products/"
     if (minPrice || maxPrice || nameSearch || categoryIds)
         url += '?'
@@ -36,8 +47,10 @@ const filterProducts = async () => {
         url += `&minPrice=${minPrice}`
     if (maxPrice)
         url += `&maxPrice=${maxPrice}`
-    if (categoryIds != '')
-        url += `&categoryIds=${categoryIds}`
+    if (categoryIds != [])
+        for (let i = 0; i < categoryIds.length; i++) {
+            url += `&categoryIds=${categoryIds[i]}`
+        }
     try {
         const responseGet = await fetch(url, {
             method: 'GET',
@@ -61,6 +74,14 @@ const filterProducts = async () => {
     catch (error) {
         alert(error)
     }
+} 
+const filterCategories = (category) => {
+    let categoryIds = JSON.parse(sessionStorage.getItem("categoryIds"))
+    let ind = categoryIds.indexOf(category.categoryId)
+    ind == -1 ? categoryIds.push(category.categoryId) : categoryIds.splice(ind, 1)
+    sessionStorage.setItem("categoryIds", JSON.stringify(categoryIds))
+    filterProducts()
+
 }
 const viewCategories = async (categories) => {
     for (let i = 0; i < categories.length; i++) {
@@ -71,7 +92,7 @@ const viewOneCategory = async (category) => {
     let tempCategory = document.getElementById("temp-category");
     let clonecategory = tempCategory.content.cloneNode(true);
     clonecategory.querySelector(".OptionName").innerText = category.categoryName;
-    clonecategory.querySelector(".opt").addEventListener('change', () => { })
+    clonecategory.querySelector(".opt").addEventListener('change', () => { filterCategories(category) })
     document.getElementById("categoryList").appendChild(clonecategory)
 }
 const getCategories = async () => {
@@ -93,3 +114,4 @@ const getCategories = async () => {
         alert(error)
     }
 }
+

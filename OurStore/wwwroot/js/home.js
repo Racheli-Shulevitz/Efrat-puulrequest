@@ -50,7 +50,7 @@ const Login = async () => {
             return alert("user not found")
         const dataPost = await responsePost.json();
         alert(`welcome ${dataPost.firstName}`)
-        window.location.href = "updateUserDetails.html"
+        window.location.href = "Products.html"
         sessionStorage.setItem("currentUser", dataPost.id)
     }
     catch (err) {
