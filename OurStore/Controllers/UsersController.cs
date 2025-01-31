@@ -15,13 +15,15 @@ namespace OurStore.Controllers;
 [ApiController]
 public class UsersController : ControllerBase
 {
+    private readonly ILogger<UsersController> logger;
     IUserService userService;
     IMapper mapper;
 
-    public UsersController(IUserService _userService,IMapper _mapper)
+    public UsersController(IUserService _userService,IMapper _mapper, ILogger<UsersController> _logger)
     {
         userService = _userService;
         mapper = _mapper;
+        logger = _logger;
     }
     [HttpGet("{id}")]
     public async Task<ActionResult<UserDTO>> Get(int id)
@@ -45,6 +47,7 @@ public class UsersController : ControllerBase
     [Route("login")]
     public async Task<ActionResult<User>> PostLogin([FromQuery] string email,string password)
     {
+        logger.LogCritical($"login attempted with User Name , {email} and password {password}.");
         User checkUser = await userService.login(email,password);
         return checkUser != null ? Ok(checkUser) : NoContent();
     }

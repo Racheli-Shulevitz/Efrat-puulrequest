@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using OurStore;
 using Repositories;
 using Services;
+using NLog.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,10 +16,13 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IRatingService, RatingService>();
+builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+builder.Host.UseNLog();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
@@ -25,8 +30,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 // Configure the HTTP request pipeline.
+app.UseRatingMiddleware();
 
 app.UseHttpsRedirection();
 
