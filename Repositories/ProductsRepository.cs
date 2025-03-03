@@ -17,6 +17,10 @@ public class ProductsRepository : IProductsRepository
         _OurStoreContext = ourStoreContext;
     }
 
+    public async Task<Product> GetProductById(int id)
+    {
+        return await _OurStoreContext.Products.FirstOrDefaultAsync(Product => Product.ProductId == id);
+    }
     public async Task<List<Product>> GetProducts(string? desc, int? minPrice, int? maxPrice, int?[] categoryIds)
     {
        var query = _OurStoreContext.Products.Where(product =>
@@ -30,4 +34,5 @@ public class ProductsRepository : IProductsRepository
         return products;
         //return await _OurStoreContext.Products.Include(c => c.Category).ToListAsync();
     }
+
 }

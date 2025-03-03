@@ -1,10 +1,10 @@
-const strengthMeter = document.getElementById("strengthMeter");
+let resultPassword=0;
 const GetDataFromSignIn = () => {
     const email = document.querySelector("#email").value;
     const firstName = document.querySelector("#firstName").value;
     const lastName = document.querySelector("#lastName").value;
     const password = document.querySelector("#password").value;
-    return { password, lastName, firstName, email }
+    return ({ email, password, firstName, lastName })
 }
 const GetDataFromLogin = () => {
     const email = document.querySelector("#emailLogin").value;
@@ -14,73 +14,131 @@ const GetDataFromLogin = () => {
 
 const SignIn = async () => {
     const nweUser = GetDataFromSignIn()
-    if (!nweUser.password || !nweUser.email)
-        return alert("password & email are required")
-    if (nweUser.firstName.length > 15 || nweUser.lastName.length > 15)
-        return alert("lastName & firstName need to be between 0 till 15")
-    try {
-        const responsePost = await fetch("api/users", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(nweUser)
-        })
-        const dataPost = await responsePost.json();
-        if (!responsePost.ok)
-            alert("password is not enough strong , please enter a difference..")
-        else
-            alert(`${dataPost.firstName} created`)
-    }
-    catch (error) {
-        alert(error)
+    if (!nweUser.email || !nweUser.password || !nweUser.firstName)
+        alert("Fields are required")
+    else if (nweUser.email.indexOf('@') == -1 || nweUser.email.indexOf('@') == nweUser.email.length-1)
+        alert("Invalid email address")
+    else if (resultPassword < 3) 
+        alert("weak password")
+    else if (nweUser.firstName.length < 2 || nweUser.firstName.length > 20)
+        alert("Name can be between 2 till 20 letters")
+    else {
+        try {
+            const responsePost = await fetch("api/users", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(nweUser)
+            })
+            const dataPost = await responsePost.json();
+            if (responsePost.ok) {
+                alert(`${dataPost.firstName} created`)
+            }
+        }
+        catch (error) {
+            alert(error)
+        }
     }
 }
 const Login = async () => {
     const newUser = GetDataFromLogin()
-    try {
-        const responsePost = await fetch(`api/users/login/?email=${newUser.email}&password=${newUser.password}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            query: { email: newUser.email, password: newUser.password }
-        })
-        if (responsePost.status === 204)
-            return alert("user not found")
-        const dataPost = await responsePost.json();
-        alert(`welcome ${dataPost.firstName}`)
-        window.location.href = "Products.html"
-        sessionStorage.setItem("currentUser", dataPost.id)
+    if (!newUser.email || !newUser.password)
+        alert("Fields are required")
+    else {
+        try {
+            const responsePost = await fetch(`api/users/login/?email=${newUser.email}&password=${newUser.password}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                query: { email: newUser.email, password: newUser.password }
+            })
+            if (responsePost.status === 204)
+                return alert("user not found")
+            const dataPost = await responsePost.json();
+            alert(`welcome ${dataPost.firstName}`)
+            window.location.href = "Products.html"
+            sessionStorage.setItem("currentUser", dataPost.id)
+        }
+        catch (err) {
+            alert(err)
+        }
     }
-    catch (err) {
-            alert("")
-    } 
 }
 
 const ShowRegister = () => {
     const register = document.querySelector(".visibleRegister");
     register.classList.remove("visibleRegister")
 }
-const CheckPassword = async() => {
-    const cPassword = document.querySelector("#password").value;
-    try {
-        const responsePost = await fetch(`api/users/password/?password=${cPassword}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            query: { password: cPassword }
-        });
-        const dataPost = await responsePost.json();
-        strengthMeter.value = dataPost;
-        if (responsePost.status === 400)
-            return alert("password is too weak!")
-        else
-            return alert("password is strong enough")
-    }
-    catch (err) {
-        alert("")
+const CheckPassword = async () => {
+    const password = document.querySelector("#password").value;
+    if (password) {
+        try {
+            const responsePost = await fetch(`api/users/password/?password=${password}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                query: { password: password }
+            });
+            const dataPost = await responsePost.json();
+            document.getElementById("strengthMeter").value= dataPost;
+            resultPassword = dataPost
+        }
+        catch (err) {
+            alert(err)
+        }
     }
 }
+const updateDetails = async () => {
+    const nweUser = GetDataFromSignIn()
+    if (!nweUser.email || !nweUser.password || !nweUser.firstName)
+        alert("Fields are required")
+    else if (nweUser.email.indexOf('@') == -1 || nweUser.email.indexOf('@') == nweUser.email.length - 1)
+        alert("Invalid email address")
+    else if (resultPassword < 3)
+        alert("weak password")
+    else if (nweUser.firstName.length < 2 || nweUser.firstName.length > 20)
+        alert("Name can be between 2 till 20 letters")
+    else {
+        try {
+            const id = sessionStorage.getItem("currentUser")
+            const responsePut = await fetch(`api/users/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(nweUser)
+            })
+            if (responsePut.ok)
+                alert(`updated succefully`)
+        }
+        catch (err) {
+            alert(err)
+        }
+    }
+}
+    const details = async () => {
+        try {
+            const id = sessionStorage.getItem("currentUser")
+            console.log(id)
+            const responseGet = await fetch(`api/users/${id}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
 
+            if (responseGet.ok) {
+                detailsUser = await responseGet.json()
+            }
+            document.querySelector("#email").value = detailsUser.email
+            document.querySelector("#firstName").value = detailsUser.firstName
+            document.querySelector("#lastName").value = detailsUser.lastName
+        }
+        catch (err) {
+            alert(err)
+        }
+        
+}

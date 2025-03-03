@@ -26,11 +26,11 @@ public class UsersController : ControllerBase
         logger = _logger;
     }
     [HttpGet("{id}")]
-    public async Task<ActionResult<UserDTO>> Get(int id)
+    public async Task<ActionResult<UserDTOPost>> Get(int id)
     {
         User checkUser = await userService.getById(id);
-        UserDTO userDTO = mapper.Map<User, UserDTO>(checkUser);
-        return userDTO != null? Ok(userDTO) : NoContent();
+        UserDTOPost userDTOPost = mapper.Map<User, UserDTOPost>(checkUser);
+        return userDTOPost != null? Ok(userDTOPost) : NoContent();
     }
 
     // POST api/<UsersController>
@@ -47,8 +47,9 @@ public class UsersController : ControllerBase
     [Route("login")]
     public async Task<ActionResult<User>> PostLogin([FromQuery] string email,string password)
     {
-        logger.LogCritical($"login attempted with User Name , {email} and password {password}.");
         User checkUser = await userService.login(email,password);
+       
+        logger.LogInformation($"login attempted with User Name , {email} and password {password}.");
         return checkUser != null ? Ok(checkUser) : NoContent();
     }
 
@@ -61,13 +62,13 @@ public class UsersController : ControllerBase
     }
     [HttpPost]
     [Route("password")]
-    public IActionResult PostPassword([FromQuery] string password)
+    public int PostPassword([FromQuery] string password)
     {
-        int checkPassword = userService.checkPassword(password);
-        if (checkPassword < 3)
-            return BadRequest(checkPassword);
-        else
-            return Ok(checkPassword);
+       return userService.checkPassword(password);
+        //if (score < 3)
+        //    return BadRequest(score);
+        //else
+        //    return Ok(score);
     }
 }
 

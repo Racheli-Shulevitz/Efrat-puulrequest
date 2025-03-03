@@ -16,7 +16,12 @@ public class ProductsService:IProductsService
     {
         productsRepository = _productRepository;
     }
-    public async Task<List<Product>> GetProducts(string? desc, int? minPrice, int? maxPrice, int?[] categoryIds)
+
+    public async Task<Product> GetProductById(int id)
+    {
+        return await productsRepository.GetProductById(id);
+    }
+        public async Task<List<Product>> GetProducts(string? desc, int? minPrice, int? maxPrice, int?[] categoryIds)
     {
         return await productsRepository.GetProducts(desc,minPrice, maxPrice, categoryIds);
     }

@@ -15,6 +15,7 @@ public class Mapper:Profile
         CreateMap<User, UserDTO>();
         CreateMap<OrderDTOPost, Order>();
         CreateMap<UserDTOPost, User>();
+        CreateMap<User, UserDTOPost>();
 
     }
 }

@@ -13,6 +13,7 @@ const load = addEventListener("load", async () => {
     sessionStorage.setItem("shoppingBag", JSON.stringify(ShoppinBag))
     filterProducts()
     getCategories()
+    document.querySelector("#ItemsCountText").textContent = ShoppinBag.length
 })
 const viewProducts = async (products) => {
     for (let i = 0; i < products.length; i++) {
@@ -113,5 +114,16 @@ const getCategories = async () => {
     catch (error) {
         alert(error)
     }
+}
+    const TrackLinkID = () => {
+        if (sessionStorage.getItem("currentUser") == null) {
+            const result = confirm("אינך מחובר,להתחברות לחץ אישור")
+            if (result)
+                window.location.href = "home.html"
+        }
+        else {
+            window.location.href = "updateUserDetails.html"
+        }
+    
 }
 

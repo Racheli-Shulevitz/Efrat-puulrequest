@@ -24,8 +24,8 @@ namespace OurStore.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ProductDTO>>> Get([FromQuery] string? desc, [FromQuery] int? minPrice, [FromQuery] int? maxPrice, [FromQuery] int?[] categoryIds)
         {
-            List<Product> productList = await productsService.GetProducts(desc, minPrice,maxPrice,categoryIds);
-            List<ProductDTO> productryDTOList = mapper.Map<List<Product>,List<ProductDTO>>(productList);
+            List<Product> productList = await productsService.GetProducts(desc, minPrice, maxPrice, categoryIds);
+            List<ProductDTO> productryDTOList = mapper.Map<List<Product>, List<ProductDTO>>(productList);
             return productryDTOList != null ? Ok(productryDTOList) : BadRequest();
         }
     }

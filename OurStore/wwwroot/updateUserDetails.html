@@ -3,18 +3,18 @@
 <head>
     <meta charset="utf-8" />
     <title>עדכון פרטי משתמש</title>
-    <script defer src="updateUserDetails.js"></script>
-    <script defer src="home.js"></script>
+    <script src="/js/home.js"></script>
+    <!--<script defer src="home.js"></script>-->
 
 </head>
-<body dir="rtl">
+<body dir="rtl" onLoad="details()">
     <div>
         <h1>עדכון פרטי משתמש</h1>
-        <input placeholder="אימייל" type="email" id="emailUpdate" /><br />
+        <input placeholder="אימייל" type="email" id="email" /><br />
         <input placeholder="סיסמא" type="password" id="password" onblur="CheckPassword()" />
         <progress id="strengthMeter" max="4" value="0"></progress><br />
-        <input placeholder="שם פרטי" id="firstNameUpdate" /><br />
-        <input placeholder="שם משפחה" id="lastNameUpdate" /><br />
+        <input placeholder="שם פרטי" id="firstName" /><br />
+        <input placeholder="שם משפחה" id="lastName" /><br />
         <button onclick="updateDetails()">עדכון</button>
     </div>
 </body>
