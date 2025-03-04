@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace Entities;
-//pull request
+//pull request////
 public partial class Category
 {
     public int CategoryId { get; set; }
